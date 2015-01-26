@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Знаток лекарств</string>
+    <string name="action_settings">Настройки</string>
+    <string name="hello_world">Привет мир!</string>
+	<string name="name_title_dialog">Выберите язык</string>
+	
+	<string name="btn_main_list">ОБЩИЙ СПИСОК</string>
+	<string name="btn_chest">МОЯ АПТЕЧКА</string>
+	<string name="btn_favorite">ИЗБРАННОЕ</string>
+	<string name="btn_search">ДОП. ПОСИК</string>
+	<string name="btn_bar_code">ШТРИХ-КОД</string>
+	<string name="btn_thanks">БЛАГОДАРОЧКА</string>
+	<string name="btn_feedback">ОС</string>
+	
+	<string name="txt_lenguage_interf">Язык интерфейса</string>
+	
+	<string name="open_description_str">Описание</string>
+	<string name="add_favorites_str">Избранное</string>
+	
+</resources>

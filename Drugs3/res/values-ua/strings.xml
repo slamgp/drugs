@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Знавець ліків</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="hello_world">Слава УКРАЇНІ!</string>
+	<string name="name_title_dialog">Оберіть мову</string>
+	
+	<string name="btn_main_list">ЗАГАЛЬНИЙ СПИСОК</string>
+	<string name="btn_chest">МОЯ АПТЕЧКА</string>
+	<string name="btn_favorite">ВИБРАНЕ</string>
+	<string name="btn_search">ДОД. ПОШУК</string>
+	<string name="btn_bar_code">ШТРИХ-КОД</string>
+	<string name="btn_thanks">ПОДЯКА</string>
+	<string name="btn_feedback">Допомога</string>
+	
+	<string name="txt_lenguage_interf">Мова інтерфейсу</string>
+	
+     <string name="open_description_str">Опис</string>
+	 <string name="add_favorites_str">Обране</string>
+	
+</resources>

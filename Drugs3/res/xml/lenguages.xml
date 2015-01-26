@@ -1,0 +1,14 @@
+<lenguages>
+    <lenguage>
+        <name>Українська</name>
+        <shrot-name>UA</shrot-name>
+    </lenguage> 
+    <lenguage>
+        <name>Русский</name>
+        <shrot-name>RU</shrot-name>
+    </lenguage>    
+    <lenguage>
+        <name>English</name>
+        <shrot-name>EN</shrot-name>
+    </lenguage> 
+</lenguages>    
