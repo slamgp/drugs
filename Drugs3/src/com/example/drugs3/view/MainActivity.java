@@ -173,6 +173,10 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		
 		
 		myDB = new MyDBHelper(this, "apteka");
+		if (myDB == null)
+		{
+			int i = 1;
+		};
 	//	paintButton(btnMain);
 	}	
 	
