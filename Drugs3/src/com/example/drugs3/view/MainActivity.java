@@ -1,6 +1,7 @@
 package com.example.drugs3.view;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import com.example.drugs3.R;
 import com.example.drugs3.model.Lenguage;
 import com.example.drugs3.model.ParseLenguage;
+import com.example.drugs3.model.dao.DBHelper;
 import com.example.drugs3.model.dao.MyDBHelper;
 
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.text.AlteredCharSequence;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -50,7 +53,7 @@ import com.facebook.widget.LoginButton;
 public class MainActivity extends Activity implements android.view.View.OnClickListener{
 	
 	
-	private MyDBHelper myDB;
+	private DBHelper myDB;
 	
 	final private  String currentLenguageKey = "currentLenguage";
 	private String currentLenguage = null;
@@ -172,9 +175,16 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		changeFragment(mainFragment);
 		
 		
-		myDB = new MyDBHelper(this, "apteka");
+		myDB = new DBHelper(this);
+		
+		try {
+			myDB.createDataBase();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-	//	paintButton(btnMain);
+		paintButton(btnMain);
 	}	
 	
 	@Override
@@ -255,6 +265,15 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		break;
 		case R.id.btn_favorite: 
 			changeFragment(favoriteFragment);
+		break;
+		case R.id.btn_search: 
+			List<String> lst = myDB.selectAllDrugs();
+			String strMain = "";
+			for(String str:lst)
+			{
+				strMain+=str;
+			}
+			Toast.makeText(this, strMain, Toast.LENGTH_LONG).show();
 		break;
 		default:
 			paintButton(v);
@@ -501,8 +520,17 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 
 	};
 	
-	//My servise method end*****************************
 	
+	public DBHelper getMyDB() {
+		return myDB;
+	}
+
+	public void setMyDB(DBHelper myDB) {
+		this.myDB = myDB;
+	}
+	
+	//My servise method end*****************************
+
 	//FaceBook Method start*******************************
 	public void OnSessionStateChenges(Session session, SessionState state, Exception exception){
 		if(session != null && session.isOpened())
