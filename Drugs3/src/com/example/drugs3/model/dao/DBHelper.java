@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -24,9 +25,14 @@ import android.os.Environment;
 import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper{
-	 //стандартный системный путь к базе данных приложения
+	 //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private  File DB_PATH;
     private  File DB_FILE;
+    
+    public static final int  ID = 0;
+    public static final int  NAME = 1;
+    public static final int  INFO = 2;
+    public static final int  ID_PREPARAT = 1;
  
     private static String DB_NAME = "apteka";
  
@@ -105,7 +111,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			   int totalSize;
 			   int downloadedSize = 0;
 			   
-		       //Открываем локальную БД как входящий поток
+		       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			   Log.d("panchenko", "copy start");
 		       InputStream myInput;
 			try {
@@ -113,13 +119,13 @@ public class DBHelper extends SQLiteOpenHelper{
 				ZipInputStream zis = new ZipInputStream(myInput);
 			       
 				Log.d("panchenko", "is= "+ myInput.toString());	
-			       //Путь ко вновь созданной БД
+			       //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
 			    String outFileName = DB_FILE.getAbsolutePath();
 			    Log.d("panchenko","new bd = " + outFileName);	
-			       //Открываем пустую базу данных как исходящий поток
+			       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 			    OutputStream myOutput = new FileOutputStream(outFileName);
 			    Log.d("panchenko", "os= "+ myOutput.toString());	
-			       //перемещаем байты из входящего файла в исходящий
+			       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			       			   
 			       
 			    ZipEntry ze;
@@ -137,7 +143,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			    	Log.d("panchenko", "external 2");
 			    }
 			    Log.d("panchenko", "coping finish");	
-			       //закрываем потоки
+			       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			    myOutput.flush();
 			    myOutput.close();
 			    myInput.close();
@@ -164,12 +170,12 @@ public class DBHelper extends SQLiteOpenHelper{
 		   @Override
 		   protected void onPostExecute(File file) {
 			   Log.d("panchenko", "onPostExecute start"); 
-		    // отображаем сообщение, если возникла ошибка
+		    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		    if (m_error != null) {
 		     m_error.printStackTrace();
 		     return;
 		    }
-		    // закрываем прогресс и удаляем временный файл
+		    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 		    pd.hide();
 		    Log.d("panchenko", "onPostExecute start"); 
 		   }
@@ -178,7 +184,7 @@ public class DBHelper extends SQLiteOpenHelper{
    
    private void openDataBase() throws SQLException{
 	   
-       //открываем БД
+       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
 	   Log.d("panchenko", "open db");	
        String myPath = DB_FILE.getAbsolutePath();
        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
@@ -197,22 +203,18 @@ public class DBHelper extends SQLiteOpenHelper{
    }
 
 
-	public List<String> selectAllDrugs()
+	public List<Preparat> selectAllDrugs()
 	{
 		Log.d("panchenko", "start select"); 
-		List <String> resList = new ArrayList<String>();
+		List <Preparat> resList = new ArrayList<Preparat>();
 		openDataBase();
 		Cursor c = myDataBase.rawQuery("Select * from preparation", null);
 		int  i = 0;
 		while (c.moveToNext())
 		{
+			Preparat prep = new Preparat(c.getInt(DBHelper.ID),c.getString(DBHelper.NAME),c.getString(DBHelper.INFO));
 			Log.d("panchenko", c.getString(2)); 
-			resList.add(c.getString(1));
-			if (i > 3)
-			{
-				break;
-			}
-			i++;
+			resList.add(prep);
 		}
 		Log.d("panchenko", "end select"); 
 		myDataBase.close();

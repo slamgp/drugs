@@ -2,8 +2,11 @@ package com.example.drugs3.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.example.drugs3.R;
+import com.example.drugs3.model.dao.DBHelper;
+import com.example.drugs3.model.dao.Preparat;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -44,13 +47,17 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	private int[] arrTo;
 	private EditText etFind;
 	  
+	private DBHelper dbHelper;
+	
 	final int MENU_OPEN = 1;
 	final int MENU_ADD = 2;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		dbHelper = (DBHelper) ((MainActivity) getActivity()).getMyDB();
 		
+		List<Preparat> allPreparat = dbHelper.selectAllDrugs();
 		 
 		View v = inflater.inflate(R.layout.main_list_fragment, container, false);
 		etFind = (EditText) v.findViewById(R.id.etFind);
@@ -66,21 +73,14 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		
 		mainList = new ArrayList<HashMap<String,Object>>();
 		
-		HashMap<String, Object> myMapping;
-		myMapping = new HashMap<String, Object>();
-		myMapping.put(NAME, "Амизон");
-		myMapping.put(IMG, R.drawable.btn_star_big_off);
-		mainList.add(myMapping);
-	
-		myMapping = new HashMap<String, Object>();
-		myMapping.put(NAME, "Карвалол");
-		myMapping.put(IMG, R.drawable.btn_star_big_off);
-		mainList.add(myMapping);
+		for(Preparat prep: allPreparat)
+		{
+			HashMap<String, Object>  myMapping = new HashMap<String, Object>();
+			myMapping.put(NAME, prep);
+			myMapping.put(IMG, R.drawable.btn_star_big_off);
+			mainList.add(myMapping);	
+		}
 		
-		myMapping = new HashMap<String, Object>();
-		myMapping.put(NAME, "Цитрамон");
-		myMapping.put(IMG, R.drawable.btn_star_big_on);
-		mainList.add(myMapping);
 		
 		arrFrom = new String[2];
 		arrTo = new int[2];
@@ -93,6 +93,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 				arrFrom,arrTo);
 		
 		lv.setAdapter(mainAdapter);
+		
 		return v;
 	}
 

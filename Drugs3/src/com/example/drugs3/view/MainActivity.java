@@ -12,7 +12,6 @@ import com.example.drugs3.R;
 import com.example.drugs3.model.Lenguage;
 import com.example.drugs3.model.ParseLenguage;
 import com.example.drugs3.model.dao.DBHelper;
-import com.example.drugs3.model.dao.MyDBHelper;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -267,13 +266,6 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 			changeFragment(favoriteFragment);
 		break;
 		case R.id.btn_search: 
-			List<String> lst = myDB.selectAllDrugs();
-			String strMain = "";
-			for(String str:lst)
-			{
-				strMain+=str;
-			}
-			Toast.makeText(this, strMain, Toast.LENGTH_LONG).show();
 		break;
 		default:
 			paintButton(v);
@@ -525,9 +517,6 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		return myDB;
 	}
 
-	public void setMyDB(DBHelper myDB) {
-		this.myDB = myDB;
-	}
 	
 	//My servise method end*****************************
 
