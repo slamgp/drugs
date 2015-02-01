@@ -89,8 +89,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		arrTo[0] = R.id.name;
 		arrTo[1] = R.id.image
 				;
-		mainAdapter =new SimpleAdapter(getActivity(), mainList, R.layout.main_list_ithem, 
-				arrFrom,arrTo);
+		mainAdapter =new SimpleAdapter(getActivity(), mainList, R.layout.main_list_ithem,arrFrom,arrTo);
 		
 		lv.setAdapter(mainAdapter);
 		

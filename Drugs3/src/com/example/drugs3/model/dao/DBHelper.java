@@ -136,7 +136,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			    	while ((length = zis.read(buffer))>0){
 			    		myOutput.write(buffer, 0, length);
 			    		downloadedSize += length;
-			    		Log.d("panchenko", "" + length + "  " + totalSize);
+			//    		Log.d("panchenko", "" + length + "  " + totalSize);
 			    //		publishProgress(downloadedSize, totalSize);
 			    		
 			    	}
