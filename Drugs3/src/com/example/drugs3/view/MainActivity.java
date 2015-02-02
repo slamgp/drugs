@@ -12,6 +12,7 @@ import com.example.drugs3.R;
 import com.example.drugs3.model.Lenguage;
 import com.example.drugs3.model.ParseLenguage;
 import com.example.drugs3.model.dao.DBHelper;
+import com.example.drugs3.model.dao.Preparat;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -19,6 +20,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.text.AlteredCharSequence;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -53,6 +56,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	
 	
 	private DBHelper myDB;
+	private List<Preparat> allPreparat;
 	
 	final private  String currentLenguageKey = "currentLenguage";
 	private String currentLenguage = null;
@@ -61,8 +65,9 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	
 	private List<Lenguage> listLenguages;
 	private List<String> listLenguagesName ;
-
 	
+	private String discription;
+
 	private FragmentTransaction fTrans;
 	private Fragment currentFragment = null;
 	private Fragment mainFragment;
@@ -173,15 +178,17 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		}
 		changeFragment(mainFragment);
 		
-		
+		final ProgressDialog pd = new ProgressDialog(this);
+	    
 		myDB = new DBHelper(this);
-		
 		try {
 			myDB.createDataBase();
-			
+			selectMainListPreparation();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 		paintButton(btnMain);
 	}	
@@ -290,11 +297,26 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		}
 		return true;
 	}
-	//Overriid method end***************************************************
 	
-	//My servise method start*****************************	
-	public void showDescription()
+	
+	public List<Preparat> getAllPreparat() {
+		return allPreparat;
+	}
+	
+	public String getDiscription() {
+		return discription;
+	}
+	
+	public void selectMainListPreparation()
 	{
+		allPreparat = myDB.selectAllDrugs();
+	}	
+	//Overriid method end***************************************************
+
+	//My servise method start*****************************	
+	public void showDescription(String discription)
+	{
+		this.discription = discription;
 		changeFragment(descriptionFragment);		
 	}
 	

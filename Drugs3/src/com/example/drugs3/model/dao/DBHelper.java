@@ -8,11 +8,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.example.drugs3.R;
+import com.example.drugs3.view.MainActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -31,14 +33,17 @@ public class DBHelper extends SQLiteOpenHelper{
     
     public static final int  ID = 0;
     public static final int  NAME = 1;
-    public static final int  INFO = 2;
+    public static final int  INFO = 3;
     public static final int  ID_PREPARAT = 1;
+    
  
     private static String DB_NAME = "apteka";
  
     private SQLiteDatabase myDataBase;
  
     private final Context myContext;
+    
+    private boolean isExsist = false;
     
     public DBHelper(Context cont)
     {
@@ -69,11 +74,8 @@ public class DBHelper extends SQLiteOpenHelper{
     	   Log.d("panchenko", "base finded");
     	//   openDataBase();
        }else{
-
     	   Log.d("panchenko", "base not finded");	
            this.getReadableDatabase();
-
-           Log.d("panchenko", "copy data base");	
            copyDataBase();
           // openDataBase();
        }
@@ -86,12 +88,15 @@ public class DBHelper extends SQLiteOpenHelper{
    
    protected void copyDataBase() throws IOException{
 	   final ProgressDialog pd = new ProgressDialog(myContext);
-	   
+
+	    Log.d("panchenko", "onPreExecute end");
+	  
 	   new AsyncTask<String, Integer, File>() {
 		   private Exception m_error = null;
 		   
 		   @Override
 		   protected void onPreExecute() {
+			   super.onPreExecute();
 			   Log.d("panchenko", "onPreExecute start"); 
 			pd.setTitle(myContext.getResources().getString(R.string.app_name)); 
 		    pd.setMessage(myContext.getResources().getString(R.string.pd_title));
@@ -107,71 +112,26 @@ public class DBHelper extends SQLiteOpenHelper{
 	   
 		   @Override
 		   protected File doInBackground(String... params) {
-			   Log.d("panchenko", "doInBackground start");
-			   int totalSize;
-			   int downloadedSize = 0;
-			   
-		       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			   Log.d("panchenko", "copy start");
-		       InputStream myInput;
-			try {
-				myInput = myContext.getAssets().open("apteka.zip");
-				ZipInputStream zis = new ZipInputStream(myInput);
-			       
-				Log.d("panchenko", "is= "+ myInput.toString());	
-			       //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
-			    String outFileName = DB_FILE.getAbsolutePath();
-			    Log.d("panchenko","new bd = " + outFileName);	
-			       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			    OutputStream myOutput = new FileOutputStream(outFileName);
-			    Log.d("panchenko", "os= "+ myOutput.toString());	
-			       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-			       			   
-			       
-			    ZipEntry ze;
-			    while ((ze = zis.getNextEntry()) != null) {
-			    totalSize = zis.available();
-			    byte[] buffer = new byte[1024];
-			    int length;
-			    	while ((length = zis.read(buffer))>0){
-			    		myOutput.write(buffer, 0, length);
-			    		downloadedSize += length;
-			//    		Log.d("panchenko", "" + length + "  " + totalSize);
-			    //		publishProgress(downloadedSize, totalSize);
-			    		
-			    	}
-			    	Log.d("panchenko", "external 2");
-			    }
-			    Log.d("panchenko", "coping finish");	
-			       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-			    myOutput.flush();
-			    myOutput.close();
-			    myInput.close();
-			    Log.d("panchenko", "close");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			  Log.d("panchenko", "doInBackground end");  
-		       try {
-		            Thread.sleep(5000);
-		        } catch (InterruptedException e) {
-		            e.printStackTrace();
-		        }
+			   Log.d("panchenko", "зашел в поток сообщения"); 
+			  while (isExsist == false)
+			  {
+				  publishProgress(1);
+			  }
+			  Log.d("panchenko", "закончилпоток сообщения"); 
 		    return null;   
 		   }
-		/*   @Override
-		   protected void onProgressUpdate(Integer... values) {
-			   Log.d("panchenko", "onProgressUpdate start");   
-		    pd
-		      .setProgress((int) ((values[0] / (float) values[1]) * 100));
-		    Log.d("panchenko", "onProgressUpdate end");
-		   };*/
+
+			@Override
+			protected void onProgressUpdate(Integer... values) {
+				super.onProgressUpdate(values);
+				pd.setProgress(values[0]);
+			}
+		   
 		   @Override
 		   protected void onPostExecute(File file) {
 			   Log.d("panchenko", "onPostExecute start"); 
 		    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-		    if (m_error != null) {
+			if (m_error != null) {
 		     m_error.printStackTrace();
 		     return;
 		    }
@@ -180,6 +140,56 @@ public class DBHelper extends SQLiteOpenHelper{
 		    Log.d("panchenko", "onPostExecute start"); 
 		   }
 	   }.execute();
+	   
+	   Log.d("panchenko", "EXECUTE");
+	   int totalSize;
+	   int downloadedSize = 0;
+	   
+       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+	   Log.d("panchenko", "copy start");
+       InputStream myInput;
+       try {
+		myInput = myContext.getAssets().open("apteka.zip");
+		ZipInputStream zis = new ZipInputStream(myInput);
+	       
+		Log.d("panchenko", "is= "+ myInput.toString());	
+	       //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
+	    String outFileName = DB_FILE.getAbsolutePath();
+	    Log.d("panchenko","new bd = " + outFileName);	
+	       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+	    OutputStream myOutput = new FileOutputStream(outFileName);
+	    Log.d("panchenko", "os= "+ myOutput.toString());	
+	       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	       			   
+	       
+	    ZipEntry ze;
+	    while ((ze = zis.getNextEntry()) != null) {
+	    totalSize = zis.available();
+	    byte[] buffer = new byte[1024];
+	    int length;
+	    	while ((length = zis.read(buffer))>0){
+	    		myOutput.write(buffer, 0, length);
+	    		downloadedSize += length;
+	   	//	Log.d("panchenko", "" + length + "  " + totalSize + ze.getSize());
+	    //		publishProgress(downloadedSize, totalSize);
+	    		
+	    	}
+	    	Log.d("panchenko", "external 2");
+	    }
+	    Log.d("panchenko", "coping finish");	
+	       //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	    myOutput.flush();
+	    myOutput.close();
+	    myInput.close();
+	    isExsist = true;
+	    Log.d("panchenko", "selected main list start");	
+	    Log.d("panchenko", "selected main list finish");	
+	    Log.d("panchenko", "close");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+
    }
    
    private void openDataBase() throws SQLException{
@@ -191,7 +201,9 @@ public class DBHelper extends SQLiteOpenHelper{
       
    }
    
-   @Override
+
+
+@Override
    public synchronized void close() {
 	   Log.d("panchenko", "close db");
            if(myDataBase != null)
@@ -208,17 +220,64 @@ public class DBHelper extends SQLiteOpenHelper{
 		Log.d("panchenko", "start select"); 
 		List <Preparat> resList = new ArrayList<Preparat>();
 		openDataBase();
-		Cursor c = myDataBase.rawQuery("Select * from preparation", null);
+		Cursor c = myDataBase.rawQuery("Select preparation._id, preparation.name,favorite.id_preparat  from preparation LEFT JOIN favorite on  preparation._id=favorite.id_preparat; ", null);
 		int  i = 0;
 		while (c.moveToNext())
 		{
-			Preparat prep = new Preparat(c.getInt(DBHelper.ID),c.getString(DBHelper.NAME),c.getString(DBHelper.INFO));
-			Log.d("panchenko", c.getString(2)); 
+			int favorite_id = c.getInt(2);
+			boolean isFavorite = false;
+			if(favorite_id > 0) isFavorite = true;
+			Preparat prep = new Preparat(c.getInt(0),c.getString(1),isFavorite);
+		//	Log.d("panchenko", ); 
 			resList.add(prep);
 		}
 		Log.d("panchenko", "end select"); 
 		myDataBase.close();
 		return resList;
+	}
+
+
+	public String selectInfoById(int id)
+	{
+		Log.d("panchenko", "start select"); 
+		String res = "";
+		openDataBase();
+		String guery = "Select info from preparation where _id = " + id;
+		Log.d("panchenko", guery); 
+		Cursor c = myDataBase.rawQuery(guery, null);
+		Log.d("panchenko", "query good"); 
+		int  i = 0;
+		while (c.moveToNext())
+		{
+			Log.d("panchenko", "1"); 
+			res = c.getString(0);
+		}
+		Log.d("panchenko", "end select"); 
+		myDataBase.close();
+		return res;
+	}
+	
+	public void insertIntoFavorite(int id)
+	{
+		Log.d("panchenko", "start insert "+ id); 
+		String res = "";
+		openDataBase();
+		String guery = "Insert into favorite (id_preparat) values(" + id + ")";
+		Log.d("panchenko", guery); 
+		myDataBase.execSQL(guery);
+		myDataBase.close();
+		Log.d("panchenko", "finish insert"); 
+	}
+	
+	public void deleteFromFavorite(int id)
+	{
+		Log.d("panchenko", "start select " + id); 
+		String res = "";
+		openDataBase();
+		String guery = "delete from favorite where id_preparat = " + id;
+		Log.d("panchenko", guery); 
+		myDataBase.execSQL(guery);
+		myDataBase.close();
 	}
 
 

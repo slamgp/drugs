@@ -4,7 +4,7 @@ public class Preparat {
 
 	private int id;
 	private String name;
-	private String info;
+	private boolean isFavorite;
 	
 	@Override
 	public String toString() {
@@ -16,10 +16,10 @@ public class Preparat {
 	{		
 	}
 	
-	public Preparat(int id, String name, String info) {
+	public Preparat(int id, String name, Boolean isFavorite) {
 		this.id = id;
 		this.name = name;
-		this.info = info;
+		this.isFavorite = isFavorite;
 	}
 	
 	public int getId() {
@@ -34,13 +34,16 @@ public class Preparat {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getInfo() {
-		return info;
+
+	public boolean isFavorite() {
+		return isFavorite;
 	}
-	public void setInfo(String info) {
-		this.info = info;
+
+	public void setFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
 	}
 	
 	
+
 
 }

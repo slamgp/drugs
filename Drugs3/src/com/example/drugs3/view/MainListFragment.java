@@ -13,6 +13,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -46,6 +47,8 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	private String[] arrFrom;
 	private int[] arrTo;
 	private EditText etFind;
+	private int position;
+	List<Preparat> allPreparat;
 	  
 	private DBHelper dbHelper;
 	
@@ -57,7 +60,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 			Bundle savedInstanceState) {
 		dbHelper = (DBHelper) ((MainActivity) getActivity()).getMyDB();
 		
-		List<Preparat> allPreparat = dbHelper.selectAllDrugs();
+		allPreparat = ((MainActivity) getActivity()).getAllPreparat();
 		 
 		View v = inflater.inflate(R.layout.main_list_fragment, container, false);
 		etFind = (EditText) v.findViewById(R.id.etFind);
@@ -65,7 +68,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		etFind.addTextChangedListener(this);
 		
 		lv = (ListView) v.findViewById(R.id.mainList);
-		lv.setOnTouchListener(this);
+	//	lv.setOnTouchListener(this);
 		//lv.setOnItemClickListener(this);
 		//lv.setOnItemLongClickListener(this);
 		
@@ -77,7 +80,10 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		{
 			HashMap<String, Object>  myMapping = new HashMap<String, Object>();
 			myMapping.put(NAME, prep);
-			myMapping.put(IMG, R.drawable.btn_star_big_off);
+			if (prep.isFavorite())
+			{
+				myMapping.put(IMG, R.drawable.btn_star_big_on);
+			}else myMapping.put(IMG, R.drawable.btn_star_big_off);
 			mainList.add(myMapping);	
 		}
 		
@@ -155,6 +161,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 			ContextMenuInfo menuInfo) {
 
 		super.onCreateContextMenu(menu, v, menuInfo);
+		
 		menu.add(Menu.NONE, 1, Menu.NONE, getResources().getString(R.string.open_description_str));
 		menu.add(Menu.NONE, 2, Menu.NONE, getResources().getString(R.string.add_favorites_str));
 	}
@@ -162,10 +169,10 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	
 @Override
 	public boolean onContextItemSelected(MenuItem item) {
-  		AdapterContextMenuInfo acmi;
+  		AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)item.getMenuInfo();
 		switch (item.getItemId()) {
 		case MENU_OPEN:
-			openIthem();
+			openIthem(acmi.position);
 			break;
 		case MENU_ADD:
 			acmi = (AdapterContextMenuInfo) item.getMenuInfo();
@@ -178,22 +185,35 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	}
 
 //service method start************************************
-private void openIthem()
+private void openIthem(int id)
 {
-	((MainActivity) getActivity()).showDescription();
+	Log.d("panchenko", "selected record = " + id); 
+	Preparat prep = allPreparat.get(id);
+	Log.d("panchenko", "prep id record = " + prep.getId()); 
+	String discription = dbHelper.selectInfoById(prep.getId());
+	((MainActivity) getActivity()).showDescription(discription);
 }
 
 private void addToFavorite(int position)
 {
 	HashMap<String, Object> hm = mainList.get(position);
+	Preparat prep = allPreparat.get(position);
 	if((Integer) hm.get(IMG) == R.drawable.btn_star_big_off)
 	{
 		hm.put(IMG, R.drawable.btn_star_big_on);
 	mainList.set(position, hm);
 	
-	
+	Log.d("panchenko", "id to favorite =  " + prep.getId()); 
+		dbHelper.insertIntoFavorite(prep.getId());
+		prep.setFavorite(true);
+		
 
-		}else hm.put(IMG, R.drawable.btn_star_big_off);
+	}else
+	{
+		hm.put(IMG, R.drawable.btn_star_big_off);
+		dbHelper.deleteFromFavorite(prep.getId());
+		prep.setFavorite(false);
+	};
 	mainAdapter.notifyDataSetChanged();
 }
 //service method finish***********************************	
