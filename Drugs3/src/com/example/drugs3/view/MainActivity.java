@@ -176,21 +176,20 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		{	
 			updateLocale();	
 		}
-		changeFragment(mainFragment);
-		
-		final ProgressDialog pd = new ProgressDialog(this);
-	    
-		myDB = new DBHelper(this);
-		try {
-			myDB.createDataBase();
-			selectMainListPreparation();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 
-		paintButton(btnMain);
+		    
+			myDB = new DBHelper(this);
+			try {
+				myDB.createDataBase();
+				selectMainListPreparation();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+	//	changeFragment(mainFragment);
+	//	paintButton(btnMain);
 	}	
 	
 	@Override

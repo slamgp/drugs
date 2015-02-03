@@ -202,6 +202,7 @@ int layout settings_layout 0x7f030015
 int menu main 0x7f0b0000
 int raw apteka 0x7f050000
 int string action_settings 0x7f09001e
+int string add_chest_str 0x7f09002c
 int string add_favorites_str 0x7f09002b
 int string app_name 0x7f09001d
 int string btn_bar_code 0x7f090026
@@ -244,7 +245,7 @@ int string fbAppi_ID 0x7f090021
 int string hello_world 0x7f09001f
 int string name_title_dialog 0x7f090020
 int string open_description_str 0x7f09002a
-int string pd_title 0x7f09002c
+int string pd_title 0x7f09002d
 int string txt_lenguage_interf 0x7f090029
 int style AppBaseTheme 0x7f0a0003
 int style AppTheme 0x7f0a0004

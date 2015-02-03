@@ -18,6 +18,7 @@
 	
      <string name="open_description_str">Опис</string>
 	 <string name="add_favorites_str">Обране</string>
+	 <string name="add_chest_str">Аптечка</string>
 	 
 	 <string name="pd_title">Розархівування БД</string>
 	

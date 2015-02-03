@@ -18,6 +18,7 @@
 	
 	<string name="open_description_str">Описание</string>
 	<string name="add_favorites_str">Избранное</string>
+	 <string name="add_chest_str">Аптечка</string>
 
 	 <string name="pd_title">Распаковка БД</string>
 		

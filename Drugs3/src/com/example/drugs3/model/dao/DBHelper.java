@@ -87,13 +87,10 @@ public class DBHelper extends SQLiteOpenHelper{
    }
    
    protected void copyDataBase() throws IOException{
-	   final ProgressDialog pd = new ProgressDialog(myContext);
 
-	    Log.d("panchenko", "onPreExecute end");
-	  
 	   new AsyncTask<String, Integer, File>() {
 		   private Exception m_error = null;
-		   
+		   ProgressDialog pd = new ProgressDialog(myContext);
 		   @Override
 		   protected void onPreExecute() {
 			   super.onPreExecute();
@@ -105,7 +102,7 @@ public class DBHelper extends SQLiteOpenHelper{
 		    pd.setMax(100);
 		    pd
 		      .setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		 
+		    pd.setIndeterminate(true);
 		    pd.show();
 		    Log.d("panchenko", "onPreExecute end");
 		   }
@@ -124,6 +121,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			@Override
 			protected void onProgressUpdate(Integer... values) {
 				super.onProgressUpdate(values);
+
 				pd.setProgress(values[0]);
 			}
 		   

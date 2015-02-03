@@ -54,6 +54,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	
 	final int MENU_OPEN = 1;
 	final int MENU_ADD = 2;
+	final int MENU_ADD_CH = 3;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -164,6 +165,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		
 		menu.add(Menu.NONE, 1, Menu.NONE, getResources().getString(R.string.open_description_str));
 		menu.add(Menu.NONE, 2, Menu.NONE, getResources().getString(R.string.add_favorites_str));
+		menu.add(Menu.NONE, 3, Menu.NONE, getResources().getString(R.string.add_favorites_str));
 	}
 
 	
@@ -177,6 +179,10 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		case MENU_ADD:
 			acmi = (AdapterContextMenuInfo) item.getMenuInfo();
 			addToFavorite((int)acmi.id);
+			break;	
+		case MENU_ADD_CH:
+			acmi = (AdapterContextMenuInfo) item.getMenuInfo();
+			addToChest((int)acmi.id);
 			break;	
 		default:
 			break;
@@ -195,6 +201,29 @@ private void openIthem(int id)
 }
 
 private void addToFavorite(int position)
+{
+	HashMap<String, Object> hm = mainList.get(position);
+	Preparat prep = allPreparat.get(position);
+	if((Integer) hm.get(IMG) == R.drawable.btn_star_big_off)
+	{
+		hm.put(IMG, R.drawable.btn_star_big_on);
+	mainList.set(position, hm);
+	
+	Log.d("panchenko", "id to favorite =  " + prep.getId()); 
+		dbHelper.insertIntoFavorite(prep.getId());
+		prep.setFavorite(true);
+		
+
+	}else
+	{
+		hm.put(IMG, R.drawable.btn_star_big_off);
+		dbHelper.deleteFromFavorite(prep.getId());
+		prep.setFavorite(false);
+	};
+	mainAdapter.notifyDataSetChanged();
+}
+
+private void addToChest(int position)
 {
 	HashMap<String, Object> hm = mainList.get(position);
 	Preparat prep = allPreparat.get(position);
