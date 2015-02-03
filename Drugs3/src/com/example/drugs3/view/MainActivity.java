@@ -35,21 +35,17 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.text.AlteredCharSequence;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -298,7 +294,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 			case MotionEvent.ACTION_DOWN: startPosition = event.getX();
 			break;
 			case MotionEvent.ACTION_UP: endPosition = event.getX();
-			slaidingFragments();
+		//	slaidingFragments();
 			break;
 			default: break;
 		}

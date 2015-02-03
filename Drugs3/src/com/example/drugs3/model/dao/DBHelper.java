@@ -113,7 +113,7 @@ public class DBHelper extends SQLiteOpenHelper{
 		   @Override
 		   protected File doInBackground(String... params) {
 			   Log.d("panchenko", "EXECUTE");
-			   int totalSize;
+			   long totalSize;
 			   int downloadedSize = 0;
 			   
 		       //��������� ��������� �� ��� �������� �����
@@ -135,14 +135,15 @@ public class DBHelper extends SQLiteOpenHelper{
 			       
 		        ZipEntry ze;
 			    while ((ze = zis.getNextEntry()) != null) {
-			      totalSize = zis.available();
+			      totalSize = ze.getSize();
 			      byte[] buffer = new byte[1024];
 			    int length;
 			     	while ((length = zis.read(buffer))>0){
 			    		myOutput.write(buffer, 0, length);
-			    		downloadedSize += length;
-			   		Log.d("panchenko", "" + length + "  " + totalSize + ze.getSize());
-			    		publishProgress(downloadedSize, totalSize);
+			    		downloadedSize += zis.available();
+			   			//int k = (int)(downloadedSize/totalSize *100);
+			   			//Log.d("panchenko", "koeff = " + k + " ( " + downloadedSize + "/" + totalSize + ")");
+			    	//	publishProgress(k);
 			    		
 			    	}
 			    	Log.d("panchenko", "external 2");
@@ -162,6 +163,11 @@ public class DBHelper extends SQLiteOpenHelper{
 			}
 		    return null;   
 		   }
+		   
+		   @Override
+		    protected void onProgressUpdate(Integer... progress) {
+		        super.onProgressUpdate(progress);
+		    }
 		   
 		   @Override
 		   protected void onPostExecute(File file) {
