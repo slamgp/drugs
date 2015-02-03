@@ -1,12 +1,18 @@
 package com.example.drugs3.view;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.example.drugs3.R;
 import com.example.drugs3.model.Lenguage;
@@ -14,6 +20,7 @@ import com.example.drugs3.model.ParseLenguage;
 import com.example.drugs3.model.dao.DBHelper;
 import com.example.drugs3.model.dao.Preparat;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -180,16 +187,17 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 		    
 			myDB = new DBHelper(this);
 			try {
-				myDB.createDataBase();
-				selectMainListPreparation();
+				if (myDB.checkDataBase())
+				{
+					selectMainListPreparation();
+				}else{
+					myDB.createDataBase();
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			
-	//	changeFragment(mainFragment);
-	//	paintButton(btnMain);
 	}	
 	
 	@Override
@@ -307,8 +315,49 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	}
 	
 	public void selectMainListPreparation()
-	{
-		allPreparat = myDB.selectAllDrugs();
+	{   
+	
+		 new AsyncTask<String, Integer, File>() {
+
+			   private Exception m_error = null;
+			   ProgressDialog pd = new ProgressDialog(MainActivity.this);
+			   @Override
+			   protected void onPreExecute() {
+				   super.onPreExecute();
+				   Log.d("panchenko", "onPreExecute start"); 
+				pd.setTitle(getResources().getString(R.string.app_name)); 
+			    pd.setMessage(getResources().getString(R.string.pd_loading));
+			    Log.d("panchenko", "onPreExecute start 1");   
+			    pd.setCancelable(false);
+			    pd.setMax(100);
+			    pd
+			      .setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			    pd.setIndeterminate(true);
+			    pd.show();
+			    Log.d("panchenko", "onPreExecute end");
+			   }
+		   
+			   @Override
+			   protected File doInBackground(String... params) {
+					allPreparat = myDB.selectAllDrugs();
+			    return null;   
+			   }
+			   
+			   @Override
+			   protected void onPostExecute(File file) {
+				   Log.d("panchenko", "onPostExecute start"); 
+			    // ���������� ���������, ���� �������� ������
+				if (m_error != null) {
+			     m_error.printStackTrace();
+			     return;
+			    }
+			    // ��������� �������� � ������� ��������� ����
+			    pd.hide();
+				   changeFragment(mainFragment);
+				   paintButton(btnMain);
+			    Log.d("panchenko", "onPostExecute start"); 
+			   }
+		   }.execute();
 	}	
 	//Overriid method end***************************************************
 

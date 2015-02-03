@@ -21,5 +21,6 @@
 	 <string name="add_chest_str">Аптечка</string>
 	 
 	 <string name="pd_title">Розархівування БД</string>
+	 <string name="pd_loading">Завантаження...</string>	
 	
 </resources>
