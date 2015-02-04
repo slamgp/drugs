@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -271,6 +272,29 @@ public class DBHelper extends SQLiteOpenHelper{
 		String res = "";
 		openDataBase();
 		String guery = "delete from favorite where id_preparat = " + id;
+		Log.d("panchenko", guery); 
+		myDataBase.execSQL(guery);
+		myDataBase.close();
+	}
+	
+	public void insertIntoChest(int id, Date start, Date end)
+	{
+		Log.d("panchenko", "start insert "+ id); 
+		String res = "";
+		openDataBase();
+		String guery = "Insert into chest (id_preparat,start_data,end_data) values(" + id +", " + start+ ", "+ end+ ")";
+		Log.d("panchenko", guery); 
+		myDataBase.execSQL(guery);
+		myDataBase.close();
+		Log.d("panchenko", "finish insert"); 
+	}
+	
+	public void deleteFromChest(int id)
+	{
+		Log.d("panchenko", "start select " + id); 
+		String res = "";
+		openDataBase();
+		String guery = "delete from chest where id_preparat = " + id;
 		Log.d("panchenko", guery); 
 		myDataBase.execSQL(guery);
 		myDataBase.close();

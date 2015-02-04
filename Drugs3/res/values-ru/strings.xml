@@ -5,6 +5,7 @@
     <string name="action_settings">Настройки</string>
     <string name="hello_world">Привет мир!</string>
 	<string name="name_title_dialog">Выберите язык</string>
+	<string name="name_title_dialog_add_chest">Добавить в аптечку</string>
 	
 	<string name="btn_main_list">ОБЩИЙ СПИСОК</string>
 	<string name="btn_chest">МОЯ АПТЕЧКА</string>
@@ -22,4 +23,7 @@
 
 	<string name="pd_title">Распаковка БД</string>
 	<string name="pd_loading">Загрузка...</string>	
+	
+ 	<string name="start_data">Дата начала:</string>
+	<string name="end_data">Дата завершения:</string>	
 </resources>

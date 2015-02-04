@@ -1,15 +1,21 @@
 package com.example.drugs3.view;
 
+
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
 import com.example.drugs3.R;
+import com.example.drugs3.controller.MainListController;
 import com.example.drugs3.model.dao.DBHelper;
 import com.example.drugs3.model.dao.Preparat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,19 +27,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class MainListFragment extends Fragment implements android.view.View.OnTouchListener, TextWatcher {
 	
@@ -48,6 +49,13 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	private int[] arrTo;
 	private EditText etFind;
 	private int position;
+	private MainListController mainListController;
+	private View viewInflate;
+	LayoutInflater layoutInflater;
+	
+	 DatePicker startDate;;
+	 DatePicker endDate;
+
 	List<Preparat> allPreparat;
 	  
 	private DBHelper dbHelper;
@@ -56,19 +64,55 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	final int MENU_ADD = 2;
 	final int MENU_ADD_CH = 3;
 	
+	private android.content.DialogInterface.OnClickListener myDialogListener = new  android.content.DialogInterface.OnClickListener(){
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			Log.d("panchenko", "vubral " +which); 
+			if(which == -1)
+			{
+				int yearS = startDate.getYear();
+				int monthS = startDate.getMonth();
+				int dayS = startDate.getDayOfMonth();
+				
+				int yearF = endDate.getYear();
+				int monthF = endDate.getMonth();
+				int dayF = endDate.getDayOfMonth();
+				
+				Date start = new Date(yearS - 1900, monthS, dayS);
+				Date end = new Date(yearF - 1900, monthF, dayF);
+			
+				if(end.before(start)){
+					Toast.makeText(getActivity(), "Incorrect date", Toast.LENGTH_LONG).show();
+				}else{
+					mainListController.setStart(start);
+					mainListController.setEnd(end);
+					mainListController.addPreparatToDbChest();
+					dialog.cancel();
+				}
+			
+			}else dialog.cancel();
+		}
+
+
+
+		
+	};
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		layoutInflater = inflater;
 		dbHelper = (DBHelper) ((MainActivity) getActivity()).getMyDB();
 		
 		allPreparat = ((MainActivity) getActivity()).getAllPreparat();
 		 
-		View v = inflater.inflate(R.layout.main_list_fragment, container, false);
-		etFind = (EditText) v.findViewById(R.id.etFind);
+		viewInflate = inflater.inflate(R.layout.main_list_fragment, container, false);
+		etFind = (EditText) viewInflate.findViewById(R.id.etFind);
 
 		etFind.addTextChangedListener(this);
 		
-		lv = (ListView) v.findViewById(R.id.mainList);
+		lv = (ListView) viewInflate.findViewById(R.id.mainList);
 	//	lv.setOnTouchListener(this);
 		//lv.setOnItemClickListener(this);
 		//lv.setOnItemLongClickListener(this);
@@ -100,7 +144,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		
 		lv.setAdapter(mainAdapter);
 		
-		return v;
+		return viewInflate;
 	}
 
 	@Override
@@ -165,7 +209,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		
 		menu.add(Menu.NONE, 1, Menu.NONE, getResources().getString(R.string.open_description_str));
 		menu.add(Menu.NONE, 2, Menu.NONE, getResources().getString(R.string.add_favorites_str));
-		menu.add(Menu.NONE, 3, Menu.NONE, getResources().getString(R.string.add_favorites_str));
+		menu.add(Menu.NONE, 3, Menu.NONE, getResources().getString(R.string.add_chest_str));
 	}
 
 	
@@ -191,6 +235,8 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	}
 
 //service method start************************************
+
+
 private void openIthem(int id)
 {
 	Log.d("panchenko", "selected record = " + id); 
@@ -224,27 +270,34 @@ private void addToFavorite(int position)
 }
 
 private void addToChest(int position)
-{
+{	
 	HashMap<String, Object> hm = mainList.get(position);
 	Preparat prep = allPreparat.get(position);
-	if((Integer) hm.get(IMG) == R.drawable.btn_star_big_off)
-	{
-		hm.put(IMG, R.drawable.btn_star_big_on);
-	mainList.set(position, hm);
+	mainListController = new MainListController(getActivity());
+	mainListController.setPreparatToAddChest(prep);
 	
-	Log.d("panchenko", "id to favorite =  " + prep.getId()); 
-		dbHelper.insertIntoFavorite(prep.getId());
-		prep.setFavorite(true);
-		
+	final Calendar c = Calendar.getInstance();
+	int year = c.get(Calendar.YEAR);
+	int month = c.get(Calendar.MONTH);
+	int day = c.get(Calendar.DAY_OF_MONTH);
+	int nextDay = day + 1;
 
-	}else
-	{
-		hm.put(IMG, R.drawable.btn_star_big_off);
-		dbHelper.deleteFromFavorite(prep.getId());
-		prep.setFavorite(false);
-	};
-	mainAdapter.notifyDataSetChanged();
+	
+	AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+	adb.setTitle(R.string.name_title_dialog_add_chest);
+	View view = layoutInflater.inflate(R.layout.input_chest_layout, null);
+	startDate = (DatePicker) view.findViewById(R.id.start_date);
+	endDate = (DatePicker) view.findViewById(R.id.end_date);
+	startDate.init(year, month, day,null);
+
+	endDate.init(year, month, nextDay,null);
+	
+	adb.setPositiveButton("Œ ", myDialogListener);
+	adb.setNegativeButton("Cancel", myDialogListener);
+	adb.setView(view);
+	adb.show();
 }
+
 //service method finish***********************************	
 
 }

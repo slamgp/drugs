@@ -5,6 +5,7 @@
     <string name="action_settings">Налаштування</string>
     <string name="hello_world">Слава УКРАЇНІ!</string>
 	<string name="name_title_dialog">Оберіть мову</string>
+	<string name="name_title_dialog_add_chest">Додати до аптечки</string>
 	
 	<string name="btn_main_list">ЗАГАЛЬНИЙ СПИСОК</string>
 	<string name="btn_chest">МОЯ АПТЕЧКА</string>
@@ -22,5 +23,8 @@
 	 
 	 <string name="pd_title">Розархівування БД</string>
 	 <string name="pd_loading">Завантаження...</string>	
+	 
+	<string name="start_data">Дата початку:</string>
+	<string name="end_data">Дата закінчення:</string>	
 	
 </resources>
