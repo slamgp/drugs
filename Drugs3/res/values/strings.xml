@@ -27,6 +27,10 @@
 	
 	  <string name="start_data">Start data:</string>
 	  <string name="end_data">Finish data:</string>	
+	  
+	  <string name="btn_ok">OK</string>
+	  <string name="btn_cancel">Cancel</string>	
+	 
 			
 	
 </resources>

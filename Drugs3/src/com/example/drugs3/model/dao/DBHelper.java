@@ -5,8 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.example.drugs3.R;
+import com.example.drugs3.controller.MyChestController;
 import com.example.drugs3.view.MainActivity;
 
 import android.app.ProgressDialog;
@@ -280,9 +284,12 @@ public class DBHelper extends SQLiteOpenHelper{
 	public void insertIntoChest(int id, Date start, Date end)
 	{
 		Log.d("panchenko", "start insert "+ id); 
+		
+		Log.d("panchenko", "start insert "+ start); 
+		Log.d("panchenko", "start insert "+ end); 
 		String res = "";
 		openDataBase();
-		String guery = "Insert into chest (id_preparat,start_data,end_data) values(" + id +", " + start+ ", "+ end+ ")";
+		String guery = "Insert into chest (id_preparat,start_data,end_data) values(" + id +", '" +  MyChestController.DateToSqlite(start)+ "', '"+  MyChestController.DateToSqlite(end)+ "')";
 		Log.d("panchenko", guery); 
 		myDataBase.execSQL(guery);
 		myDataBase.close();
@@ -314,6 +321,63 @@ public class DBHelper extends SQLiteOpenHelper{
 		
 	}
 
+	public List<Chest> selectChest()
+	{
+		//deleteOldPreparatsFromChest();
+		
+		Log.d("panchenko", "start select"); 
+		List <Chest> resList = new ArrayList<Chest>();
+		openDataBase();
+		
+		final Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR) - 1900;
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		
+		Date currentDate = new Date(year,month,day);
+	//	String query = "Select chest.start_data,chest.end_data, preparation._id, preparation.name, preparation.code from chest  LEFT JOIN preparation on chest.id_preparat = preparation._id  where start_data <= " + currentDate + ";";
+		String query = "Select chest.start_data,chest.end_data, preparation._id, preparation.name, preparation.code from chest  LEFT JOIN preparation on chest.id_preparat = preparation._id;";
+		Log.d("panchenko", query); 
+		Cursor c = myDataBase.rawQuery(query, null);
+		int  i = 0;
+		Log.d("panchenko", "vuborka"); 
+		while (c.moveToNext())
+		{
+			Log.d("panchenko", "vuborka 1"); 
+			boolean isFavorite = false;
+			Log.d("panchenko", "create preparat"); 
+			Preparat prep = new Preparat(c.getInt(2),c.getString(3),isFavorite);
+			
+			Date start = MyChestController.DateTFromSqlite(c.getString(0));
+			Date end =  MyChestController.DateTFromSqlite(c.getString(1));
+			Log.d("panchenko", c.getString(0)); 
+			Log.d("panchenko", c.getString(1)); 
+			Chest chest = new Chest(prep, start, end);
+			Log.d("panchenko", chest.toString() + "-" + chest.getStartData().toString() + "-"+ chest.getEndData()); 
+			resList.add(chest);
+		}
+		Log.d("panchenko", "end select"); 
+		myDataBase.close();
+		return resList;
+	}
+	
+	private void deleteOldPreparatsFromChest()
+	{
 
+		openDataBase();
+		
+		final Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR) - 1900;
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		
+		Date currentDate = new Date(year,month,day);
+		//String query = "delete from chest where end_data < " + currentDate +" ;";
+		String query = "delete from chest ;";
+		myDataBase.execSQL(query);
+		myDataBase.close();
+
+	}
+	
     
 }

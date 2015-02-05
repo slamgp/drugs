@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.example.drugs3.R;
 import com.example.drugs3.controller.MainListController;
+import com.example.drugs3.controller.MyChestController;
 import com.example.drugs3.model.dao.DBHelper;
 import com.example.drugs3.model.dao.Preparat;
 
@@ -50,6 +51,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	private EditText etFind;
 	private int position;
 	private MainListController mainListController;
+	private MyChestController myChestController;
 	private View viewInflate;
 	LayoutInflater layoutInflater;
 	
@@ -84,9 +86,9 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 				if(end.before(start)){
 					Toast.makeText(getActivity(), "Incorrect date", Toast.LENGTH_LONG).show();
 				}else{
-					mainListController.setStart(start);
-					mainListController.setEnd(end);
-					mainListController.addPreparatToDbChest();
+					myChestController.setStart(start);
+					myChestController.setEnd(end);
+					myChestController.addPreparatToDbChest();
 					dialog.cancel();
 				}
 			
@@ -273,8 +275,8 @@ private void addToChest(int position)
 {	
 	HashMap<String, Object> hm = mainList.get(position);
 	Preparat prep = allPreparat.get(position);
-	mainListController = new MainListController(getActivity());
-	mainListController.setPreparatToAddChest(prep);
+	myChestController = new MyChestController(getActivity());
+	myChestController.setPreparatToAddChest(prep);
 	
 	final Calendar c = Calendar.getInstance();
 	int year = c.get(Calendar.YEAR);
@@ -292,8 +294,8 @@ private void addToChest(int position)
 
 	endDate.init(year, month, nextDay,null);
 	
-	adb.setPositiveButton("Œ ", myDialogListener);
-	adb.setNegativeButton("Cancel", myDialogListener);
+	adb.setPositiveButton(getActivity().getResources().getString(R.string.btn_ok), myDialogListener);
+	adb.setNegativeButton(getActivity().getResources().getString(R.string.btn_cancel), myDialogListener);
 	adb.setView(view);
 	adb.show();
 }

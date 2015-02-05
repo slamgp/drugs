@@ -27,4 +27,7 @@
 	<string name="start_data">Дата початку:</string>
 	<string name="end_data">Дата закінчення:</string>	
 	
+	<string name="btn_ok">OK</string>
+	<string name="btn_cancel">Скасувати</string>	
+	
 </resources>

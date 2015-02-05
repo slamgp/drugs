@@ -26,4 +26,7 @@
 	
  	<string name="start_data">Дата начала:</string>
 	<string name="end_data">Дата завершения:</string>	
+	
+    <string name="btn_ok">OK</string>
+	<string name="btn_cancel">Отмена</string>	
 </resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/namePreparaTochest"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:text="asdas"
+    	android:textSize="20sp"
+    />
+    <LinearLayout
+   	 	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+
+          	<TextView
+        	android:id="@+id/startDataChest"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_gravity="left"
+    		android:layout_weight="10"
+    		android:text="asdas"
+    		android:textSize="12sp"
+    	/>
+   
+   		<TextView
+       		 android:id="@+id/endtDataChest"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_gravity="right"
+    		android:text="aaaaddfds"
+    		android:layout_weight="1"
+    		android:textSize="12sp"
+    	/>
+   		
+   </LinearLayout> 
+   
+</LinearLayout>
+
