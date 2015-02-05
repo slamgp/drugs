@@ -11,5 +11,13 @@ public class Favorite {
 	public Preparat getPreparat() {
 		return preparat;
 	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return preparat.getName();
+	}
+	
+	
 	
 }

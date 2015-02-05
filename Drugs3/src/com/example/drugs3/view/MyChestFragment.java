@@ -2,6 +2,7 @@ package com.example.drugs3.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.example.drugs3.R;
 import com.example.drugs3.controller.MyChestController;
@@ -22,13 +23,10 @@ public class MyChestFragment extends Fragment {
 	private MyChestController myChestController;
 	LayoutInflater layoutInflater;
 	private ListView lv; 
-	private ArrayList<Chest> listChest;
-	private ArrayList<HashMap<String, Object>> mainList;
+	private List listChest;
+	private List  mainList;
 	private SimpleAdapter mainAdapter;
-	
-	public final static String NAME = "name";
-	public final static String START = "start";
-	public final static String END = "end";
+
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,35 +40,21 @@ public class MyChestFragment extends Fragment {
 		
 		lv = (ListView) viewInflate.findViewById(R.id.listChest);
 		
-		listChest = (ArrayList<Chest>) myChestController.selectChest();
-		
-		mainList = new ArrayList<HashMap<String,Object>>();
-		for(Chest chest: listChest)
-		{
-			HashMap< String, Object> hm = new HashMap<String, Object>();
-			hm.put(NAME, chest.getPreparat());
-			hm.put(START,  MyChestController.DateToSqlite(chest.getStartData()));
-			hm.put(END,  MyChestController.DateToSqlite(chest.getEndData()));
-			mainList.add(hm);
-		}
-		
-		String [] arrFrom = new String[3];
-		int [] arrTo = new int[3];
-		
-		arrFrom[0] = NAME;
-		arrFrom[1] = START;
-		arrFrom[2] = END;
-		
-		arrTo[0] = R.id.namePreparaTochest;
-		arrTo[1] = R.id.startDataChest;
-		arrTo[2] = R.id.endtDataChest;
-		
-		mainAdapter = new SimpleAdapter(getActivity(), mainList, R.layout.my_chest_ithem, arrFrom, arrTo);
-		
-		lv.setAdapter(mainAdapter);
-		
+		cretaeList();
 		
 		return viewInflate;
+		
+	}
+	
+	private void cretaeList()
+	{
+		listChest =  myChestController.selectChest();
+		
+		mainAdapter = myChestController.createAdapter();
+		
+		mainList = myChestController.getMainList();
+		
+		lv.setAdapter(mainAdapter);
 		
 	}
 

@@ -5,6 +5,7 @@ public class Preparat {
 	private int id;
 	private String name;
 	private boolean isFavorite;
+	private boolean isChest;
 	
 	@Override
 	public String toString() {
@@ -16,10 +17,11 @@ public class Preparat {
 	{		
 	}
 	
-	public Preparat(int id, String name, Boolean isFavorite) {
+	public Preparat(int id, String name, Boolean isFavorite, Boolean isChest) {
 		this.id = id;
 		this.name = name;
 		this.isFavorite = isFavorite;
+		this.isChest = isChest;
 	}
 	
 	public int getId() {
@@ -43,7 +45,13 @@ public class Preparat {
 		this.isFavorite = isFavorite;
 	}
 	
-	
+	public boolean isChest() {
+		return isChest;
+	}
+
+	public void setChest(boolean isChest) {
+		this.isChest = isChest;
+	}	
 
 
 }

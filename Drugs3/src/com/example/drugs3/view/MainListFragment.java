@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.example.drugs3.R;
-import com.example.drugs3.controller.MainListController;
 import com.example.drugs3.controller.MyChestController;
 import com.example.drugs3.model.dao.DBHelper;
 import com.example.drugs3.model.dao.Preparat;
@@ -43,6 +42,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	private float endPosition = 0;	
 	private static final String NAME = "name";
 	private static final String IMG = "image";
+	private static final String IMG_CHEST = "imageCH";
 	private ArrayList<HashMap<String, Object>> mainList;
 	private SimpleAdapter mainAdapter;
 	private ListView lv; 
@@ -50,7 +50,6 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	private int[] arrTo;
 	private EditText etFind;
 	private int position;
-	private MainListController mainListController;
 	private MyChestController myChestController;
 	private View viewInflate;
 	LayoutInflater layoutInflater;
@@ -131,17 +130,26 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 			{
 				myMapping.put(IMG, R.drawable.btn_star_big_on);
 			}else myMapping.put(IMG, R.drawable.btn_star_big_off);
+			
+			if (prep.isChest())
+			{
+				myMapping.put(IMG_CHEST, R.drawable.btn_chest_star_on);
+			}else myMapping.put(IMG_CHEST, R.drawable.btn_star_big_off);
+			
 			mainList.add(myMapping);	
 		}
 		
 		
-		arrFrom = new String[2];
-		arrTo = new int[2];
+		arrFrom = new String[3];
+		arrTo = new int[3];
 		arrFrom[0] = NAME;
 		arrFrom[1] = IMG;
+		arrFrom[2] = IMG_CHEST;
+		
 		arrTo[0] = R.id.name;
-		arrTo[1] = R.id.image
-				;
+		arrTo[1] = R.id.image;
+		arrTo[2] = R.id.imageCH;
+		
 		mainAdapter =new SimpleAdapter(getActivity(), mainList, R.layout.main_list_ithem,arrFrom,arrTo);
 		
 		lv.setAdapter(mainAdapter);
@@ -275,29 +283,47 @@ private void addToChest(int position)
 {	
 	HashMap<String, Object> hm = mainList.get(position);
 	Preparat prep = allPreparat.get(position);
-	myChestController = new MyChestController(getActivity());
-	myChestController.setPreparatToAddChest(prep);
 	
-	final Calendar c = Calendar.getInstance();
-	int year = c.get(Calendar.YEAR);
-	int month = c.get(Calendar.MONTH);
-	int day = c.get(Calendar.DAY_OF_MONTH);
-	int nextDay = day + 1;
+	if((Integer) hm.get(IMG_CHEST) == R.drawable.btn_star_big_off)
+	{
+		hm.put(IMG_CHEST, R.drawable.btn_chest_star_on);
+		mainList.set(position, hm);
+	
+		Log.d("panchenko", "id to favorite =  " + prep.getId()); 
+		prep.setChest(true);
+		
+		myChestController = new MyChestController(getActivity());
+		myChestController.setPreparatToAddChest(prep);
+		
+		final Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		int nextDay = day + 1;
 
-	
-	AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-	adb.setTitle(R.string.name_title_dialog_add_chest);
-	View view = layoutInflater.inflate(R.layout.input_chest_layout, null);
-	startDate = (DatePicker) view.findViewById(R.id.start_date);
-	endDate = (DatePicker) view.findViewById(R.id.end_date);
-	startDate.init(year, month, day,null);
+		
+		AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+		adb.setTitle(R.string.name_title_dialog_add_chest);
+		View view = layoutInflater.inflate(R.layout.input_chest_layout, null);
+		startDate = (DatePicker) view.findViewById(R.id.start_date);
+		endDate = (DatePicker) view.findViewById(R.id.end_date);
+		startDate.init(year, month, day,null);
 
-	endDate.init(year, month, nextDay,null);
-	
-	adb.setPositiveButton(getActivity().getResources().getString(R.string.btn_ok), myDialogListener);
-	adb.setNegativeButton(getActivity().getResources().getString(R.string.btn_cancel), myDialogListener);
-	adb.setView(view);
-	adb.show();
+		endDate.init(year, month, nextDay,null);
+		
+		adb.setPositiveButton(getActivity().getResources().getString(R.string.btn_ok), myDialogListener);
+		adb.setNegativeButton(getActivity().getResources().getString(R.string.btn_cancel), myDialogListener);
+		adb.setView(view);
+		adb.show();
+		mainAdapter.notifyDataSetChanged();
+
+	}else
+	{
+		hm.put(IMG, R.drawable.btn_star_big_off);
+		dbHelper.deleteFromChest(prep.getId());
+		prep.setChest(false);
+	};
+
 }
 
 //service method finish***********************************	

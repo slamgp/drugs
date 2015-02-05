@@ -221,14 +221,20 @@ public class DBHelper extends SQLiteOpenHelper{
 		Log.d("panchenko", "start select"); 
 		List <Preparat> resList = new ArrayList<Preparat>();
 		openDataBase();
-		Cursor c = myDataBase.rawQuery("Select preparation._id, preparation.name,favorite.id_preparat  from preparation LEFT JOIN favorite on  preparation._id=favorite.id_preparat; ", null);
+		String query = "Select preparation._id, preparation.name,favorite.id_preparat,chest.id_preparat  from preparation LEFT JOIN favorite on  preparation._id=favorite.id_preparat LEFT JOIN chest on  preparation._id=chest.id_preparat ; ";
+		Log.d("panchenko", query); 
+		Cursor c = myDataBase.rawQuery(query, null);
 		int  i = 0;
 		while (c.moveToNext())
 		{
 			int favorite_id = c.getInt(2);
+			int chest_id = c.getInt(3);
+			
 			boolean isFavorite = false;
+			boolean isChest = false;
 			if(favorite_id > 0) isFavorite = true;
-			Preparat prep = new Preparat(c.getInt(0),c.getString(1),isFavorite);
+			if(chest_id > 0) isChest = true;
+			Preparat prep = new Preparat(c.getInt(0),c.getString(1),isFavorite,isChest);
 		//	Log.d("panchenko", ); 
 			resList.add(prep);
 		}
@@ -346,7 +352,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			Log.d("panchenko", "vuborka 1"); 
 			boolean isFavorite = false;
 			Log.d("panchenko", "create preparat"); 
-			Preparat prep = new Preparat(c.getInt(2),c.getString(3),isFavorite);
+			Preparat prep = new Preparat(c.getInt(2),c.getString(3),isFavorite,false);
 			
 			Date start = MyChestController.DateTFromSqlite(c.getString(0));
 			Date end =  MyChestController.DateTFromSqlite(c.getString(1));
@@ -355,6 +361,35 @@ public class DBHelper extends SQLiteOpenHelper{
 			Chest chest = new Chest(prep, start, end);
 			Log.d("panchenko", chest.toString() + "-" + chest.getStartData().toString() + "-"+ chest.getEndData()); 
 			resList.add(chest);
+		}
+		Log.d("panchenko", "end select"); 
+		myDataBase.close();
+		return resList;
+	}
+	
+	public List<Favorite> selectFavorite()
+	{
+		//deleteOldPreparatsFromChest();
+		
+		Log.d("panchenko", "start select"); 
+		List <Favorite> resList = new ArrayList<Favorite>();
+		openDataBase();
+
+		String query = "select preparation._id, preparation.name, preparation.code from favorite  LEFT JOIN preparation on favorite.id_preparat = preparation._id;";
+		
+		Log.d("panchenko", query); 
+		Cursor c = myDataBase.rawQuery(query, null);
+		int  i = 0;
+		Log.d("panchenko", "vuborka"); 
+		while (c.moveToNext())
+		{
+			Log.d("panchenko", "vuborka 1"); 
+			Log.d("panchenko", "create preparat"); 
+			Preparat prep = new Preparat(c.getInt(0),c.getString(1),false,true);
+			
+			Favorite favorite = new Favorite(prep);
+			Log.d("panchenko", favorite.toString()); 
+			resList.add(favorite);
 		}
 		Log.d("panchenko", "end select"); 
 		myDataBase.close();

@@ -4,11 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
+ 	<TextView
+        android:id="@+id/textViewFav"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="333333333333">
+        android:layout_gravity="center"
+        android:textSize="30sp"
+		android:textStyle = "bold"
+        android:text="@string/btn_favorite">
     </TextView>
-    
+
+    <ListView 
+   		android:id="@+id/listFavorite"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">		     
+    </ListView>	
 </LinearLayout>
