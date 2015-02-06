@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.drugs3.R;
+import com.example.drugs3.controller.DescriptionController;
+import com.example.drugs3.controller.MainListController;
 import com.example.drugs3.controller.MyChestController;
 import com.example.drugs3.model.dao.DBHelper;
 import com.example.drugs3.model.dao.Preparat;
@@ -28,7 +31,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -36,30 +41,26 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 
-public class MainListFragment extends Fragment implements android.view.View.OnTouchListener, TextWatcher {
+public class MainListFragment extends Fragment implements android.view.View.OnTouchListener, TextWatcher, OnItemClickListener {
 	
 	private float startPosition = 0;
 	private float endPosition = 0;	
-	private static final String NAME = "name";
-	private static final String IMG = "image";
-	private static final String IMG_CHEST = "imageCH";
-	private ArrayList<HashMap<String, Object>> mainList;
+	private List mainList;
 	private SimpleAdapter mainAdapter;
 	private ListView lv; 
-	private String[] arrFrom;
-	private int[] arrTo;
 	private EditText etFind;
 	private int position;
 	private MyChestController myChestController;
 	private View viewInflate;
-	LayoutInflater layoutInflater;
+	private LayoutInflater layoutInflater;
+	
+	private MainListController mainListController;
 	
 	 DatePicker startDate;;
 	 DatePicker endDate;
 
 	List<Preparat> allPreparat;
-	  
-	private DBHelper dbHelper;
+	 
 	
 	final int MENU_OPEN = 1;
 	final int MENU_ADD = 2;
@@ -103,10 +104,9 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		layoutInflater = inflater;
-		dbHelper = (DBHelper) ((MainActivity) getActivity()).getMyDB();
+		mainListController = new MainListController(getActivity());
 		
-		allPreparat = ((MainActivity) getActivity()).getAllPreparat();
+		layoutInflater = inflater;
 		 
 		viewInflate = inflater.inflate(R.layout.main_list_fragment, container, false);
 		etFind = (EditText) viewInflate.findViewById(R.id.etFind);
@@ -115,42 +115,18 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		
 		lv = (ListView) viewInflate.findViewById(R.id.mainList);
 	//	lv.setOnTouchListener(this);
-		//lv.setOnItemClickListener(this);
+		lv.setOnItemClickListener(this);
 		//lv.setOnItemLongClickListener(this);
 		
 		registerForContextMenu(lv);
 		
-		mainList = new ArrayList<HashMap<String,Object>>();
 		
-		for(Preparat prep: allPreparat)
-		{
-			HashMap<String, Object>  myMapping = new HashMap<String, Object>();
-			myMapping.put(NAME, prep);
-			if (prep.isFavorite())
-			{
-				myMapping.put(IMG, R.drawable.btn_star_big_on);
-			}else myMapping.put(IMG, R.drawable.btn_star_big_off);
-			
-			if (prep.isChest())
-			{
-				myMapping.put(IMG_CHEST, R.drawable.btn_chest_star_on);
-			}else myMapping.put(IMG_CHEST, R.drawable.btn_star_big_off);
-			
-			mainList.add(myMapping);	
-		}
+		mainAdapter = mainListController.createAdapter();
+		allPreparat = mainListController.getAllPreparat();
+		
+		mainList = mainListController.getMainList();
 		
 		
-		arrFrom = new String[3];
-		arrTo = new int[3];
-		arrFrom[0] = NAME;
-		arrFrom[1] = IMG;
-		arrFrom[2] = IMG_CHEST;
-		
-		arrTo[0] = R.id.name;
-		arrTo[1] = R.id.image;
-		arrTo[2] = R.id.imageCH;
-		
-		mainAdapter =new SimpleAdapter(getActivity(), mainList, R.layout.main_list_ithem,arrFrom,arrTo);
 		
 		lv.setAdapter(mainAdapter);
 		
@@ -217,7 +193,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
-		menu.add(Menu.NONE, 1, Menu.NONE, getResources().getString(R.string.open_description_str));
+	//	menu.add(Menu.NONE, 1, Menu.NONE, getResources().getString(R.string.open_description_str));
 		menu.add(Menu.NONE, 2, Menu.NONE, getResources().getString(R.string.add_favorites_str));
 		menu.add(Menu.NONE, 3, Menu.NONE, getResources().getString(R.string.add_chest_str));
 	}
@@ -251,29 +227,30 @@ private void openIthem(int id)
 {
 	Log.d("panchenko", "selected record = " + id); 
 	Preparat prep = allPreparat.get(id);
-	Log.d("panchenko", "prep id record = " + prep.getId()); 
-	String discription = dbHelper.selectInfoById(prep.getId());
-	((MainActivity) getActivity()).showDescription(discription);
+	DescriptionController descriptionController = new DescriptionController(getActivity());
+	descriptionController.openIthem(prep);
+
 }
 
 private void addToFavorite(int position)
 {
-	HashMap<String, Object> hm = mainList.get(position);
+	Log.d("panchenko", "add input"); 
+	Map hm = (Map) mainList.get(position);
 	Preparat prep = allPreparat.get(position);
-	if((Integer) hm.get(IMG) == R.drawable.btn_star_big_off)
+	if((Integer) hm.get(mainListController.IMG) == R.drawable.btn_star_big_off)
 	{
-		hm.put(IMG, R.drawable.btn_star_big_on);
+		hm.put(MainListController.IMG, R.drawable.btn_star_big_on);
 	mainList.set(position, hm);
 	
 	Log.d("panchenko", "id to favorite =  " + prep.getId()); 
-		dbHelper.insertIntoFavorite(prep.getId());
+		mainListController.insertIntoFavorite(prep.getId());
 		prep.setFavorite(true);
 		
 
 	}else
 	{
-		hm.put(IMG, R.drawable.btn_star_big_off);
-		dbHelper.deleteFromFavorite(prep.getId());
+		hm.put(MainListController.IMG, R.drawable.btn_star_big_off);
+		mainListController.deleteFromFavorite(prep.getId());
 		prep.setFavorite(false);
 	};
 	mainAdapter.notifyDataSetChanged();
@@ -281,18 +258,18 @@ private void addToFavorite(int position)
 
 private void addToChest(int position)
 {	
-	HashMap<String, Object> hm = mainList.get(position);
+	Map hm = (Map) mainList.get(position);
 	Preparat prep = allPreparat.get(position);
+	myChestController = new MyChestController(getActivity());
 	
-	if((Integer) hm.get(IMG_CHEST) == R.drawable.btn_star_big_off)
+	if((Integer) hm.get(MainListController.IMG_CHEST) == R.drawable.btn_star_big_off)
 	{
-		hm.put(IMG_CHEST, R.drawable.btn_chest_star_on);
+		hm.put(MainListController.IMG_CHEST, R.drawable.btn_chest_star_on);
 		mainList.set(position, hm);
 	
 		Log.d("panchenko", "id to favorite =  " + prep.getId()); 
 		prep.setChest(true);
 		
-		myChestController = new MyChestController(getActivity());
 		myChestController.setPreparatToAddChest(prep);
 		
 		final Calendar c = Calendar.getInstance();
@@ -315,15 +292,21 @@ private void addToChest(int position)
 		adb.setNegativeButton(getActivity().getResources().getString(R.string.btn_cancel), myDialogListener);
 		adb.setView(view);
 		adb.show();
-		mainAdapter.notifyDataSetChanged();
 
 	}else
 	{
-		hm.put(IMG, R.drawable.btn_star_big_off);
-		dbHelper.deleteFromChest(prep.getId());
+		hm.put(MainListController.IMG_CHEST, R.drawable.btn_star_big_off);
+		myChestController.deleteFromChest(prep.getId());
 		prep.setChest(false);
 	};
+	mainAdapter.notifyDataSetChanged();
 
+}
+
+@Override
+public void onItemClick(AdapterView<?> parent, View view,
+        int position, long id) {
+	openIthem(position);
 }
 
 //service method finish***********************************	

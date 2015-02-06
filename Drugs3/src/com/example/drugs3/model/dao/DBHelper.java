@@ -329,7 +329,7 @@ public class DBHelper extends SQLiteOpenHelper{
 
 	public List<Chest> selectChest()
 	{
-		//deleteOldPreparatsFromChest();
+		deleteOldPreparatsFromChest();
 		
 		Log.d("panchenko", "start select"); 
 		List <Chest> resList = new ArrayList<Chest>();
@@ -341,8 +341,9 @@ public class DBHelper extends SQLiteOpenHelper{
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		
 		Date currentDate = new Date(year,month,day);
-	//	String query = "Select chest.start_data,chest.end_data, preparation._id, preparation.name, preparation.code from chest  LEFT JOIN preparation on chest.id_preparat = preparation._id  where start_data <= " + currentDate + ";";
-		String query = "Select chest.start_data,chest.end_data, preparation._id, preparation.name, preparation.code from chest  LEFT JOIN preparation on chest.id_preparat = preparation._id;";
+		String currentDateString = MyChestController.DateToSqlite(currentDate);
+		String query = "Select chest.start_data,chest.end_data, preparation._id, preparation.name, preparation.code from chest  LEFT JOIN preparation on chest.id_preparat = preparation._id  where start_data <= '" + currentDateString + "';";
+	//	String query = "Select chest.start_data,chest.end_data, preparation._id, preparation.name, preparation.code from chest  LEFT JOIN preparation on chest.id_preparat = preparation._id;";
 		Log.d("panchenko", query); 
 		Cursor c = myDataBase.rawQuery(query, null);
 		int  i = 0;
@@ -407,8 +408,9 @@ public class DBHelper extends SQLiteOpenHelper{
 		int day = calendar.get(Calendar.DAY_OF_MONTH);
 		
 		Date currentDate = new Date(year,month,day);
-		//String query = "delete from chest where end_data < " + currentDate +" ;";
-		String query = "delete from chest ;";
+		String currentdateString = MyChestController.DateToSqlite(currentDate);
+		String query = "delete from chest where end_data < '" + currentdateString +"' ;"; 
+		//String query = "delete from chest ;";
 		myDataBase.execSQL(query);
 		myDataBase.close();
 

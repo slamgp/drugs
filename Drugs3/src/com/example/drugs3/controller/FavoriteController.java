@@ -30,16 +30,16 @@ public class FavoriteController {
 		listFavorite = null;
 	}
 	
-	public List<Favorite> selectFavorite()
+	public void selectFavorite()
 	{
 		listFavorite = null;
 		listFavorite = myDB.selectFavorite();
 		Log.d("panchenko", "favorit controller select list"); 
-		return listFavorite;
 	}
 	
 	public SimpleAdapter createAdapter()
 	{
+		selectFavorite();
 		mainList = new ArrayList<HashMap<String,Object>>();
 		Log.d("panchenko", "favorit controller start create ain list");
 		for(Favorite favorite: listFavorite)

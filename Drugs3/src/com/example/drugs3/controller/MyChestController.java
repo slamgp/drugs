@@ -84,16 +84,16 @@ public class MyChestController {
 		myDB.insertIntoChest(preparatToAddChest.getId(),start,end);
 	}
 	
-	public List<Chest> selectChest()
+	public void selectChest()
 	{
 		listChest = null;
 		listChest = myDB.selectChest();
-		
-		return listChest;
 	}
 
 	public SimpleAdapter createAdapter()
 	{
+		selectChest();
+		
 		mainList = new ArrayList<HashMap<String,Object>>();
 		for(Chest chest: listChest)
 		{
@@ -118,6 +118,16 @@ public class MyChestController {
 		
 		return mainAdapter;
 }
+	public List<Chest> getListChest() {
+		return listChest;
+	}
+
+
+	public void setListChest(List<Chest> listChest) {
+		this.listChest = listChest;
+	}
+
+
 	public static String DateToSqlite(Date date)
 	{
 		String result = null;
@@ -146,6 +156,11 @@ public class MyChestController {
 			result = null;
 		}
 		return result;
+	}
+	
+	public void deleteFromChest(int id)
+	{
+		myDB.deleteFromChest(id);
 	}
 
 
