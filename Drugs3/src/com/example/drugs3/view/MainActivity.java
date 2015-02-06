@@ -193,7 +193,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			fbLofinButton.setVisibility(View.GONE);
 	}	
 	
 	@Override
