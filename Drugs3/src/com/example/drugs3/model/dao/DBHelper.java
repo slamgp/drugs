@@ -43,8 +43,19 @@ public class DBHelper extends SQLiteOpenHelper{
    
     private AsyncTask<String, Integer, File> asc; 
     
+	private List<Preparat> allPreparat;
+    
  
-    private static String DB_NAME = "apteka";
+    public List<Preparat> getAllPreparat() {
+		return allPreparat;
+	}
+
+
+	public void setAllPreparat(List<Preparat> allPreparat) {
+		this.allPreparat = allPreparat;
+	}
+
+	private static String DB_NAME = "apteka";
  
     private SQLiteDatabase myDataBase;
  
@@ -220,6 +231,7 @@ public class DBHelper extends SQLiteOpenHelper{
 	{
 		Log.d("panchenko", "start select"); 
 		List <Preparat> resList = new ArrayList<Preparat>();
+		allPreparat = new ArrayList<Preparat>();
 		openDataBase();
 		String query = "Select preparation._id, preparation.name,favorite.id_preparat,chest.id_preparat  from preparation LEFT JOIN favorite on  preparation._id=favorite.id_preparat LEFT JOIN chest on  preparation._id=chest.id_preparat ; ";
 		Log.d("panchenko", query); 
@@ -237,6 +249,7 @@ public class DBHelper extends SQLiteOpenHelper{
 			Preparat prep = new Preparat(c.getInt(0),c.getString(1),isFavorite,isChest);
 		//	Log.d("panchenko", ); 
 			resList.add(prep);
+			allPreparat.add(prep);
 		}
 		Log.d("panchenko", "end select"); 
 		myDataBase.close();

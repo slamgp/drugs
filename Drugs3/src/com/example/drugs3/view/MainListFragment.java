@@ -120,19 +120,23 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 		
 		registerForContextMenu(lv);
 		
+		initAdapter();
 		
+		return viewInflate;
+	}
+
+	private void initAdapter()
+	{
 		mainAdapter = mainListController.createAdapter();
 		allPreparat = mainListController.getAllPreparat();
-		
 		mainList = mainListController.getMainList();
 		
 		
 		
 		lv.setAdapter(mainAdapter);
-		
-		return viewInflate;
+	
 	}
-
+	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -169,8 +173,9 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 
 	@Override
 	public void afterTextChanged(Editable s) {
-		Toast.makeText(getActivity(), "слово поиска: " + etFind.getText() , Toast.LENGTH_SHORT).show();
-		
+		String str = etFind.getText().toString();
+		mainListController.createListFromFilter(str);
+		initAdapter();
 	}
 
 	@Override
@@ -182,7 +187,7 @@ public class MainListFragment extends Fragment implements android.view.View.OnTo
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		Toast.makeText(getActivity(), "слово поиска: " + etFind.getText() , Toast.LENGTH_SHORT).show();
+	//	Toast.makeText(getActivity(), "слово поиска: " + etFind.getText() , Toast.LENGTH_SHORT).show();
 		
 	}
 

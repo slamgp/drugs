@@ -60,6 +60,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	
 	private DBHelper myDB;
 	private List<Preparat> allPreparat;
+	private List<Preparat> copyAllPreparat;
 	
 	final private  String currentLenguageKey = "currentLenguage";
 	private String currentLenguage = null;
@@ -309,7 +310,16 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	public String getDiscription() {
 		return discription;
 	}
+
 	
+	public List<Preparat> getCopyAllPreparat() {
+		return copyAllPreparat;
+	}
+
+	public void setCopyAllPreparat(List<Preparat> copyAllPreparat) {
+		this.copyAllPreparat = copyAllPreparat;
+	}
+
 	public void selectMainListPreparation()
 	{   
 	
@@ -336,6 +346,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 			   @Override
 			   protected File doInBackground(String... params) {
 					allPreparat = myDB.selectAllDrugs();
+					copyAllPreparat = myDB.getAllPreparat();
 			    return null;   
 			   }
 			   

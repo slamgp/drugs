@@ -19,6 +19,7 @@ public class MainListController {
 	private Context context;
 	DBHelper myDB;
 	List<Preparat> allPreparat;
+	List<Preparat> copyAllPreparat;
 	private ArrayList<HashMap<String, Object>> mainList;
 	private SimpleAdapter mainAdapter;
 	public static final String NAME = "name";
@@ -37,15 +38,18 @@ public class MainListController {
 	
 	public void selectAllPreparat()
 	{
+		Log.d("panchenko", "copyAll");
 		allPreparat = null;
 		allPreparat = ((MainActivity) context).getAllPreparat();
+		copyAllPreparat = null;
+		copyAllPreparat = ((MainActivity) context).getCopyAllPreparat();
 	}
 	
 	public SimpleAdapter createAdapter()
 	{
 		selectAllPreparat();
 		mainList = new ArrayList<HashMap<String,Object>>();
-		
+	
 		for(Preparat prep: allPreparat)
 		{
 			HashMap<String, Object>  myMapping = new HashMap<String, Object>();
@@ -117,6 +121,41 @@ public class MainListController {
 	{
 		myDB.deleteFromFavorite(id);
 	}
+	
+	public void createListFromFilter(String filter)
+	{
+		Log.d("panchenko", "start filter: " + filter);
+		if (filter != null){
+			Log.d("panchenko", "filter: 1 " + filter);
+			if(!filter.equals(""))
+			{
+				allPreparat.clear();
+				Log.d("panchenko", "filter: 2 " + filter);
+				for(Preparat prep: copyAllPreparat)
+				{
+					String name = prep.getName();
+					String nameFromEq;
+					if(name.length() < filter.length())
+					{
+						nameFromEq = name;
+					}else nameFromEq = name.substring(0,filter.length());
+					
+					if(nameFromEq.compareToIgnoreCase(filter) == 0){
+						allPreparat.add(prep);
+					}
+				}	
+			}else restavreilListPreparat();
+		}else restavreilListPreparat();
+	}
+	
+	private void restavreilListPreparat(){
+		allPreparat.clear();
+		for(Preparat prep:copyAllPreparat)
+		{
+			allPreparat.add(prep);
+		}
+	}
+	
 	
 	
 }
