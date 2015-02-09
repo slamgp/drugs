@@ -125,22 +125,23 @@ public class MainListController {
 	public void createListFromFilter(String filter)
 	{
 		Log.d("panchenko", "start filter: " + filter);
-		if (filter != null){
-			Log.d("panchenko", "filter: 1 " + filter);
-			if(!filter.equals(""))
+		String filt = filter.trim();
+		if (filt != null){
+			Log.d("panchenko", "filter: 1 " + filt);
+			if(!filt.equals(""))
 			{
 				allPreparat.clear();
-				Log.d("panchenko", "filter: 2 " + filter);
+				Log.d("panchenko", "filter: 2 " + filt);
 				for(Preparat prep: copyAllPreparat)
 				{
 					String name = prep.getName();
 					String nameFromEq;
-					if(name.length() < filter.length())
+					if(name.length() < filt.length())
 					{
 						nameFromEq = name;
-					}else nameFromEq = name.substring(0,filter.length());
+					}else nameFromEq = name.substring(0,filt.length());
 					
-					if(nameFromEq.compareToIgnoreCase(filter) == 0){
+					if(nameFromEq.compareToIgnoreCase(filt) == 0){
 						allPreparat.add(prep);
 					}
 				}	
